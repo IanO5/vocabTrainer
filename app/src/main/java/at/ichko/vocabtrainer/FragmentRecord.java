@@ -31,7 +31,7 @@ import android.widget.Toast;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class FragmentRecord extends Fragment implements View.OnClickListener, AdapterView.OnItemSelectedListener {
+public class FragmentRecord extends Fragment implements View.OnClickListener {
 
     boolean allowed, recording = false;
 
@@ -52,8 +52,6 @@ public class FragmentRecord extends Fragment implements View.OnClickListener, Ad
 
     ConstraintLayout lytMid;
 
-    final String prefTableId = "tableid";
-
     MediaRecorder recorder;
 
     String fileName; //File Name of the Sound file that gets recorded
@@ -66,6 +64,7 @@ public class FragmentRecord extends Fragment implements View.OnClickListener, Ad
 
     Overview overview;
     Table table;
+    LanguageSpinner spinner;
 
     public FragmentRecord() {
 
@@ -106,13 +105,18 @@ public class FragmentRecord extends Fragment implements View.OnClickListener, Ad
 
         btnRecord.setOnClickListener(this);
 
-        spLanguageSelect.setOnItemSelectedListener(this);
-
-        overview = new Overview(getActivity(), lytMid);
+        overview = new Overview(lytMid, getActivity());
         table = new Table(getActivity());
+        spinner = new LanguageSpinner(spLanguageSelect, getActivity(), () -> {
+            overview.deleteScrollView();
+            overview.getOverview(true);
+        }, () -> {
+            overview.deleteScrollView();
+            overview.getOverview(true);
+        });
 
         table.getTableNames();
-        refreshDropdown();
+        spinner.refresh();
         overview.getOverview(true);
 
         return rootView;
@@ -187,17 +191,6 @@ public class FragmentRecord extends Fragment implements View.OnClickListener, Ad
 
     }
 
-    public void refreshDropdown(){
-        table.getTableNames();
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_dropdown_item, table.getTableNames());
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spLanguageSelect.setAdapter(adapter);
-
-        spLanguageSelect.setSelection(table.getTableIndex());
-
-    }
-
     @SuppressLint("ResourceType")
     @Override
     public void onClick(View view) {
@@ -233,25 +226,5 @@ public class FragmentRecord extends Fragment implements View.OnClickListener, Ad
                 }
                 break;
         }
-    }
-
-    @Override
-    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-        SharedPreferences prefTable = getActivity().getSharedPreferences(prefTableId, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = prefTable.edit();
-
-        editor.putInt(prefTableId, i);
-        editor.commit();
-
-        spLanguageSelect.setSelection(i);
-
-        overview.deleteScrollView();
-        overview.getOverview(true);
-    }
-
-    @Override
-    public void onNothingSelected(AdapterView<?> adapterView) {
-        overview.deleteScrollView();
-        overview.getOverview(true);
     }
 }

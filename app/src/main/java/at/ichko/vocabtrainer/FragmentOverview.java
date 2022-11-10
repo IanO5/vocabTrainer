@@ -21,7 +21,7 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
-public class FragmentOverview extends Fragment implements View.OnClickListener, AdapterView.OnItemSelectedListener {
+public class FragmentOverview extends Fragment implements View.OnClickListener {
 
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
@@ -48,7 +48,7 @@ public class FragmentOverview extends Fragment implements View.OnClickListener, 
 
     Overview overview;
     Table table;
-
+    LanguageSpinner spinner;
 
     public FragmentOverview() {
 
@@ -93,13 +93,24 @@ public class FragmentOverview extends Fragment implements View.OnClickListener, 
         btnSubmitId.setOnClickListener(this);
         btnSubmit.setOnClickListener(this);
 
-        overview = new Overview(getActivity(), lytMid);
+        overview = new Overview(lytMid, getActivity());
         table = new Table(getActivity());
 
-        refreshDropdown();
-        overview.getOverview(false);
+        ItemNothingSelectExecution ex = new ItemNothingSelectExecution() {
+            @Override
+            public void nothingSelectedExecute() {
+                overview.deleteScrollView();
+                overview.getOverview(false);
+            }
+        };
 
-        spSwitchLanguage.setOnItemSelectedListener(this);
+        spinner = new LanguageSpinner(spSwitchLanguage, getActivity(), () -> {
+            overview.deleteScrollView();
+            overview.getOverview(false);
+        }, ex);
+
+        spinner.refresh();
+        overview.getOverview(false);
 
         return rootView;
     }
@@ -120,14 +131,6 @@ public class FragmentOverview extends Fragment implements View.OnClickListener, 
         overview.deleteScrollView();
 
         overview.getOverview(false);
-    }
-
-    public void refreshDropdown(){
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_dropdown_item, table.getTableNames());
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spSwitchLanguage.setAdapter(adapter);
-
-        spSwitchLanguage.setSelection(table.getTableIndex());
     }
 
 
@@ -174,25 +177,5 @@ public class FragmentOverview extends Fragment implements View.OnClickListener, 
                 btnSubmit.setVisibility(View.GONE);
                 break;
         }
-    }
-
-    @Override
-    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-        SharedPreferences prefTable = getActivity().getSharedPreferences(prefTableId, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = prefTable.edit();
-
-        editor.putInt(prefTableId, i);
-        editor.commit();
-
-        spSwitchLanguage.setSelection(i);
-
-        overview.deleteScrollView();
-        overview.getOverview(false);
-    }
-
-    @Override
-    public void onNothingSelected(AdapterView<?> adapterView) {
-        overview.deleteScrollView();
-        overview.getOverview(false);
     }
 }

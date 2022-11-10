@@ -30,7 +30,7 @@ public class Overview {
     private GridLayout gridLayout;
     private ConstraintLayout lytParent;
 
-    public Overview(Context context, ConstraintLayout lytParent){
+    public Overview(ConstraintLayout lytParent, Context context){
         this.context = context;
         this.lytParent = lytParent;
         table = new Table(this.context);

@@ -25,7 +25,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Locale;
 
-public class FragmentAdd extends Fragment implements View.OnClickListener, AdapterView.OnItemSelectedListener {
+public class FragmentAdd extends Fragment implements View.OnClickListener {
 
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
@@ -46,12 +46,15 @@ public class FragmentAdd extends Fragment implements View.OnClickListener, Adapt
 
     SharedPreferences preferences;
 
-    ArrayList<String> tableNames = new ArrayList<>();
+    //ArrayList<String> tableNames = new ArrayList<>();
 
     final String databaseName = "languagedatabase.db";
     final String tableName = "firsttable";
     final String prefIndex = "indexpref";
     final String prefTableId = "tableid";
+
+    LanguageSpinner spinner;
+    Table table;
 
     public FragmentAdd() {
 
@@ -94,9 +97,10 @@ public class FragmentAdd extends Fragment implements View.OnClickListener, Adapt
         btnAdd.setOnClickListener(this);
         btnAddLanguage.setOnClickListener(this);
 
-        spSelectedLanguage.setOnItemSelectedListener(this);
+        table = new Table(getActivity());
+        spinner = new LanguageSpinner(spSelectedLanguage, getActivity(), () -> refreshVocabNr(), () -> refreshVocabNr());
 
-        refreshDropdown();
+        spinner.refresh();
         refreshVocabNr();
 
         return rootView;
@@ -107,7 +111,7 @@ public class FragmentAdd extends Fragment implements View.OnClickListener, Adapt
         int i = 0;
         Cursor cursor = null;
         try {
-            cursor = database.rawQuery("SELECT * FROM " + tableNames.get(getTableIndex()), null);
+            cursor = database.rawQuery("SELECT * FROM " + table.get(table.getTableIndex()), null);
             cursor.moveToLast();
 
             i = cursor.getInt(0) + 1;
@@ -116,7 +120,7 @@ public class FragmentAdd extends Fragment implements View.OnClickListener, Adapt
             i = 1;
         }
 
-        database.execSQL("INSERT INTO " + tableNames.get(getTableIndex()) + " VALUES('" + i + "', '" + word + "', '" + translation + "')");
+        database.execSQL("INSERT INTO " + table.get(table.getTableIndex()) + " VALUES('" + i + "', '" + word + "', '" + translation + "')");
 
         refreshVocabNr();
 
@@ -131,21 +135,11 @@ public class FragmentAdd extends Fragment implements View.OnClickListener, Adapt
         database.close();
     }
 
-    public void refreshDropdown(){
-        getTableNames();
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_dropdown_item, tableNames);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spSelectedLanguage.setAdapter(adapter);
-
-        spSelectedLanguage.setSelection(getTableIndex());
-
-    }
-
     public void refreshVocabNr(){
+        table.getTableNames();
         SQLiteDatabase database = getActivity().openOrCreateDatabase(databaseName, Context.MODE_PRIVATE, null);
         try {
-            Cursor cursor = database.rawQuery("SELECT * FROM " + tableNames.get(getTableIndex()), null);
+            Cursor cursor = database.rawQuery("SELECT * FROM " + table.get(table.getTableIndex()), null);
             cursor.moveToLast();
 
             tvVocabNr.setText("Vocab Nr.: " + (cursor.getInt(0) + 1));
@@ -157,26 +151,6 @@ public class FragmentAdd extends Fragment implements View.OnClickListener, Adapt
         }
 
         database.close();
-    }
-
-    public void getTableNames(){
-        tableNames.clear();
-        SQLiteDatabase database = getActivity().openOrCreateDatabase(databaseName, Context.MODE_PRIVATE, null);
-        Cursor cursor = database.rawQuery("SELECT name FROM sqlite_master WHERE type='table' AND name NOT IN ('android_metadata', 'sqlite_sequence', 'room_master_table') ",null);
-        cursor.moveToFirst();
-
-        while(!cursor.isAfterLast()){
-            tableNames.add(cursor.getString(0));
-            cursor.moveToNext();
-        }
-
-        cursor.close();
-        database.close();
-    }
-
-    public Integer getTableIndex(){
-        SharedPreferences preferences = getActivity().getSharedPreferences(prefTableId, Context.MODE_PRIVATE);
-        return preferences.getInt(prefTableId, 0);
     }
 
 
@@ -198,8 +172,8 @@ public class FragmentAdd extends Fragment implements View.OnClickListener, Adapt
             case R.id.btnAddNewLanguage:
                 boolean existing = false;
 
-                for(int i = 0; i < tableNames.size(); i++){
-                    if(tableNames.get(i).equalsIgnoreCase(etNewLanguage.getText().toString())){
+                for(int i = 0; i < table.getSize(); i++){
+                    if(table.get(i).equalsIgnoreCase(etNewLanguage.getText().toString())){
                         existing = true;
                         break;
                     }
@@ -209,29 +183,12 @@ public class FragmentAdd extends Fragment implements View.OnClickListener, Adapt
                     addLanguage(etNewLanguage.getText().toString());
                     Toast.makeText(getActivity(), "Added successfully", Toast.LENGTH_SHORT).show();
                     etNewLanguage.setText("");
-                    refreshDropdown();
+                    spinner.refresh();
                 }
                 else {
                     Toast.makeText(getActivity(), "Inputs invalid or Language already existing", Toast.LENGTH_SHORT).show();
                 }
                 break;
         }
-    }
-
-    @Override
-    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-        SharedPreferences prefTable = getActivity().getSharedPreferences(prefTableId, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = prefTable.edit();
-
-        editor.putInt(prefTableId, i);
-        editor.commit();
-
-        spSelectedLanguage.setSelection(i);
-        refreshVocabNr();
-    }
-
-    @Override
-    public void onNothingSelected(AdapterView<?> adapterView) {
-        refreshVocabNr();
     }
 }

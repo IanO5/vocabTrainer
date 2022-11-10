@@ -37,15 +37,13 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class FragmentLearn extends Fragment implements View.OnClickListener, AdapterView.OnItemSelectedListener {
+public class FragmentLearn extends Fragment implements View.OnClickListener {
 
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
     private String mParam1;
     private String mParam2;
-
-    ArrayList<String> tableNames = new ArrayList<>();
 
     TextView tvVocabStrength;
     TextView tvVocabNr;
@@ -80,7 +78,9 @@ public class FragmentLearn extends Fragment implements View.OnClickListener, Ada
     final String prefSettingPlayRecord = "settingplayrecord";
     final String prefSettingAnimation = "settinganimation";
     final String prefSettingSound = "settingsound";
-    final String prefTableId = "tableid";
+
+    LanguageSpinner spinner;
+    Table table;
 
 
     public FragmentLearn() {
@@ -132,10 +132,15 @@ public class FragmentLearn extends Fragment implements View.OnClickListener, Ada
         btnCorrect.setOnClickListener(this);
         btnFalse.setOnClickListener(this);
 
-        spLanguageSelect.setOnItemSelectedListener(this);
+        spinner = new LanguageSpinner(spLanguageSelect, getActivity(), () -> {
+            btnCorrect.setVisibility(View.GONE);
+            btnFalse.setVisibility(View.GONE);
+            learn();}, () -> learn());
 
-        getTableNames();
-        refreshDropdown();
+        table = new Table(getActivity());
+
+        table.getTableNames();
+        spinner.refresh();
         //learn();
 
         return rootView;
@@ -143,11 +148,11 @@ public class FragmentLearn extends Fragment implements View.OnClickListener, Ada
 
     public void learn() {
         SQLiteDatabase database = getActivity().openOrCreateDatabase(databaseName, Context.MODE_PRIVATE, null);
-        if (getTableSize() > 0) {
+        if (table.getSize() > 0) {
 
             btnShowTranslation.setVisibility(View.VISIBLE);
             SharedPreferences prefPlayRecord = getActivity().getSharedPreferences(prefSettingPlayRecord, Context.MODE_PRIVATE);
-            vocabStrength = new int[getTableSize() - 1];
+            vocabStrength = new int[table.getSize() - 1];
 
             boolean foundNewWord = false;
             int id = 0;
@@ -159,7 +164,7 @@ public class FragmentLearn extends Fragment implements View.OnClickListener, Ada
                     wasFalse = true;
                     foundNewWord = true;
                 } else {
-                    id = (int) ((Math.random() * (getTableSize() - 1)) + 1);
+                    id = (int) ((Math.random() * (table.getSize() - 1)) + 1);
                     wasFalse = false;
                     if (vocabStrength[id - 1] > 5) {
                         foundNewWord = false;
@@ -176,7 +181,7 @@ public class FragmentLearn extends Fragment implements View.OnClickListener, Ada
             currentId = id;
             tvVocabNr.setText("Vocab Nr.: " + id);
 
-            Cursor cursor = database.rawQuery("SELECT * FROM " + tableNames.get(getTableIndex()) + " WHERE id = '" + id + "'", null);
+            Cursor cursor = database.rawQuery("SELECT * FROM " + table.get(table.getTableIndex()) + " WHERE id = '" + id + "'", null);
             cursor.moveToFirst();
 
             if (Math.random() > 0.5) {
@@ -195,8 +200,8 @@ public class FragmentLearn extends Fragment implements View.OnClickListener, Ada
                     vocabSound = new MediaPlayer();
 
                     try {
-                        getTableNames();
-                        vocabSound.setDataSource(getActivity().getExternalCacheDir().getAbsolutePath() + "/RecordAudio" + tableNames.get(getTableIndex()) + id + ".3gp");
+                        table.getTableNames();
+                        vocabSound.setDataSource(getActivity().getExternalCacheDir().getAbsolutePath() + "/RecordAudio" + table.get(table.getTableIndex()) + id + ".3gp");
                         vocabSound.prepare();
                         vocabSound.start();
                     } catch (IOException e) {
@@ -235,10 +240,10 @@ public class FragmentLearn extends Fragment implements View.OnClickListener, Ada
         Cursor cursor;
 
         if (!isSwitched) {
-            cursor = database.rawQuery("SELECT * FROM " + tableNames.get(getTableIndex()) + " WHERE word = '" + tvWord.getText() + "'", null);
+            cursor = database.rawQuery("SELECT * FROM " + table.get(table.getTableIndex()) + " WHERE word = '" + tvWord.getText() + "'", null);
 
         } else {
-            cursor = database.rawQuery("SELECT * FROM " + tableNames.get(getTableIndex()) + " WHERE word = '" + tvTranslation.getText() + "'", null);
+            cursor = database.rawQuery("SELECT * FROM " + table.get(table.getTableIndex()) + " WHERE word = '" + tvTranslation.getText() + "'", null);
         }
 
         cursor.moveToFirst();
@@ -330,58 +335,6 @@ public class FragmentLearn extends Fragment implements View.OnClickListener, Ada
         }, 1500);
     }
 
-    public void getTableNames(){
-        tableNames.clear();
-        SQLiteDatabase database = getActivity().openOrCreateDatabase(databaseName, Context.MODE_PRIVATE, null);
-        Cursor cursor = database.rawQuery("SELECT name FROM sqlite_master WHERE type='table' AND name NOT IN ('android_metadata', 'sqlite_sequence', 'room_master_table') ",null);
-        cursor.moveToFirst();
-
-        while(!cursor.isAfterLast()){
-            tableNames.add(cursor.getString(0));
-            cursor.moveToNext();
-        }
-
-        cursor.close();
-        database.close();
-    }
-
-    public Integer getTableSize(){
-        SharedPreferences preferences = getActivity().getSharedPreferences(prefTableId, Context.MODE_PRIVATE);
-        SQLiteDatabase database = getActivity().openOrCreateDatabase(databaseName, Context.MODE_PRIVATE, null);
-        int i = 0;
-        Cursor cursor = null;
-        try {
-            cursor = database.rawQuery("SELECT * FROM " + tableNames.get(preferences.getInt(prefTableId, 0)), null);
-            cursor.moveToLast();
-
-            i = cursor.getInt(0) + 1;
-        } catch (CursorIndexOutOfBoundsException ex){
-            Log.d("ERROR: ", "Noch keine Wörter vorhanden");
-            i = 0;
-        }
-
-        cursor.close();
-        database.close();
-
-        return i;
-    }
-
-    public Integer getTableIndex(){
-        SharedPreferences preferences = getActivity().getSharedPreferences(prefTableId, Context.MODE_PRIVATE);
-        return preferences.getInt(prefTableId, 0);
-    }
-
-    public void refreshDropdown(){
-        getTableNames();
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_dropdown_item, tableNames);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spLanguageSelect.setAdapter(adapter);
-
-        spLanguageSelect.setSelection(getTableIndex());
-
-    }
-
     @Override
     public void onClick(View view) {
         switch (view.getId()){
@@ -395,8 +348,8 @@ public class FragmentLearn extends Fragment implements View.OnClickListener, Ada
                     vocabSound = new MediaPlayer();
 
                     try {
-                        getTableNames();
-                        vocabSound.setDataSource(getActivity().getExternalCacheDir().getAbsolutePath() + "/RecordAudio" + tableNames.get(getTableIndex()) + currentId + ".3gp");
+                        table.getTableNames();
+                        vocabSound.setDataSource(getActivity().getExternalCacheDir().getAbsolutePath() + "/RecordAudio" + table.get(table.getTableIndex()) + currentId + ".3gp");
                         vocabSound.prepare();
                         vocabSound.start();
                     } catch (IOException e) {
@@ -422,22 +375,4 @@ public class FragmentLearn extends Fragment implements View.OnClickListener, Ada
 
     }
 
-    @Override
-    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-        SharedPreferences prefTable = getActivity().getSharedPreferences(prefTableId, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = prefTable.edit();
-
-        editor.putInt(prefTableId, i);
-        editor.commit();
-
-        spLanguageSelect.setSelection(i);
-        btnCorrect.setVisibility(View.GONE);
-        btnFalse.setVisibility(View.GONE);
-        learn();
-    }
-
-    @Override
-    public void onNothingSelected(AdapterView<?> adapterView) {
-        learn();
-    }
 }
