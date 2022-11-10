@@ -12,7 +12,6 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 
 public class MainActivity extends AppCompatActivity{
     BottomNavigationView navigationView;
@@ -26,7 +25,7 @@ public class MainActivity extends AppCompatActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main2);
+        setContentView(R.layout.activity_main);
         navigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation_bar);
         navigationView.setBackground(null);
         navigationView.getMenu().getItem(2).setChecked(true);
