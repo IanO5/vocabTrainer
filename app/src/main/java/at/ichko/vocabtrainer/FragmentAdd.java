@@ -6,24 +6,17 @@ import android.database.Cursor;
 import android.database.CursorIndexOutOfBoundsException;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Locale;
+import androidx.fragment.app.Fragment;
 
 public class FragmentAdd extends Fragment implements View.OnClickListener {
 
@@ -44,14 +37,7 @@ public class FragmentAdd extends Fragment implements View.OnClickListener {
 
     Spinner spSelectedLanguage;
 
-    SharedPreferences preferences;
-
-    //ArrayList<String> tableNames = new ArrayList<>();
-
     final String databaseName = "languagedatabase.db";
-    final String tableName = "firsttable";
-    final String prefIndex = "indexpref";
-    final String prefTableId = "tableid";
 
     LanguageSpinner spinner;
     Table table;
