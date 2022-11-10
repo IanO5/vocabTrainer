@@ -3,16 +3,12 @@ package at.ichko.vocabtrainer;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.database.CursorIndexOutOfBoundsException;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,14 +16,9 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.GridLayout;
-import android.widget.HorizontalScrollView;
-import android.widget.ScrollView;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.File;
 import java.util.ArrayList;
 
 public class FragmentOverview extends Fragment implements View.OnClickListener, AdapterView.OnItemSelectedListener {
@@ -50,13 +41,14 @@ public class FragmentOverview extends Fragment implements View.OnClickListener, 
 
     Spinner spSwitchLanguage;
 
-    NestedScrollView scrollView;
-    GridLayout gridLayout;
-
     ArrayList<String> tableNames = new ArrayList<>();
 
     final String databaseName = "languagedatabase.db";
     final String prefTableId = "tableid";
+
+    Overview overview;
+    Table table;
+
 
     public FragmentOverview() {
 
@@ -101,90 +93,15 @@ public class FragmentOverview extends Fragment implements View.OnClickListener, 
         btnSubmitId.setOnClickListener(this);
         btnSubmit.setOnClickListener(this);
 
-        getTableNames();
+        overview = new Overview(getActivity(), lytMid);
+        table = new Table(getActivity());
+
         refreshDropdown();
-        getOverview();
+        overview.getOverview(false);
 
         spSwitchLanguage.setOnItemSelectedListener(this);
 
         return rootView;
-    }
-
-    public void getOverview(){
-        SQLiteDatabase database = getActivity().openOrCreateDatabase(databaseName, Context.MODE_PRIVATE, null);
-        SharedPreferences preferences = getActivity().getSharedPreferences(prefTableId, Context.MODE_PRIVATE);
-        int count = 0;
-        Cursor cursorLength = null;
-
-        try {
-            cursorLength = database.rawQuery("SELECT * FROM " + tableNames.get(preferences.getInt(prefTableId, 0)), null);
-            cursorLength.moveToLast();
-
-            count = cursorLength.getInt(0) + 1;
-        } catch (CursorIndexOutOfBoundsException ex){
-            Log.d("ERROR: ", "Noch keine Wörter vorhanden");
-            count = 1;
-        }
-
-        ArrayList<String> allWords = new ArrayList<String>();
-        ArrayList<String> allTranslations = new ArrayList<String>();
-
-        for(int i = 1; i < count ; i++){
-            Cursor cursor = database.rawQuery("SELECT * FROM " + tableNames.get(preferences.getInt(prefTableId, 0)) + " WHERE id = '" + i + "'", null);
-            cursor.moveToFirst();
-
-            allWords.add(cursor.getString(1));
-            allTranslations.add(cursor.getString(2));
-
-            cursor.close();
-        }
-
-        database.close();
-        generateGrid(allWords, allTranslations);
-    }
-
-    public void generateGrid(ArrayList<String> allWords, ArrayList<String> allTranslations){
-        scrollView = new NestedScrollView(getActivity());
-        gridLayout = new GridLayout(getActivity());
-        HorizontalScrollView scrollViewHorizontal = new HorizontalScrollView(getActivity());
-
-        scrollView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 850));
-
-
-        gridLayout.setColumnCount(3);
-        gridLayout.setRowCount(getTableSize());
-        gridLayout.setOrientation(GridLayout.HORIZONTAL);
-        scrollViewHorizontal.addView(gridLayout);
-        scrollView.addView(scrollViewHorizontal);
-        lytMid.addView(scrollView, 0);
-
-        for(int i = 0; i < allWords.size(); i++){
-            TextView tvId = new TextView(getActivity());
-            TextView tvWordOverview = new TextView(getActivity());
-            TextView tvTranslationOverview = new TextView(getActivity());
-
-            tvId.setTextSize(18);
-            tvWordOverview.setTextSize(18);
-            tvTranslationOverview.setTextSize(18);
-
-            tvId.setPadding(20, 0, 15, 0);
-            tvTranslationOverview.setPadding(20,0,10,20);
-            tvWordOverview.setPadding(20, 0,0,0);
-
-            tvId.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-            tvWordOverview.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-            tvTranslationOverview.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-
-            tvId.setText(i+1 + "");
-            tvWordOverview.setText(allWords.get(i));
-            tvTranslationOverview.setText(allTranslations.get(i));
-
-            gridLayout.addView(tvId);
-            gridLayout.addView(tvWordOverview);
-            gridLayout.addView(tvTranslationOverview);
-        }
-
-        gridLayout.setVisibility(View.VISIBLE);
     }
 
     public void makeChangeInDatabase () {
@@ -200,61 +117,17 @@ public class FragmentOverview extends Fragment implements View.OnClickListener, 
 
         database.close();
 
-        ViewGroup parent = (ViewGroup) scrollView.getParent();
-        parent.removeView(scrollView);
+        overview.deleteScrollView();
 
-        getOverview();
-    }
-
-    public void getTableNames(){
-        tableNames.clear();
-        SQLiteDatabase database = getActivity().openOrCreateDatabase(databaseName, Context.MODE_PRIVATE, null);
-        Cursor cursor = database.rawQuery("SELECT name FROM sqlite_master WHERE type='table' AND name NOT IN ('android_metadata', 'sqlite_sequence', 'room_master_table') ",null);
-        cursor.moveToFirst();
-
-        while(!cursor.isAfterLast()){
-            tableNames.add(cursor.getString(0));
-            cursor.moveToNext();
-        }
-
-        cursor.close();
-        database.close();
-    }
-
-    public Integer getTableSize(){
-        SharedPreferences preferences = getActivity().getSharedPreferences(prefTableId, Context.MODE_PRIVATE);
-        SQLiteDatabase database = getActivity().openOrCreateDatabase(databaseName, Context.MODE_PRIVATE, null);
-        int i = 0;
-        Cursor cursor = null;
-        try {
-            cursor = database.rawQuery("SELECT * FROM " + tableNames.get(preferences.getInt(prefTableId, 0)), null);
-            cursor.moveToLast();
-
-            i = cursor.getInt(0) + 1;
-        } catch (CursorIndexOutOfBoundsException ex){
-            Log.d("ERROR: ", "Noch keine Wörter vorhanden");
-            i = 0;
-        }
-
-        cursor.close();
-        database.close();
-
-        return i;
-    }
-
-    public Integer getTableIndex(){
-        SharedPreferences preferences = getActivity().getSharedPreferences(prefTableId, Context.MODE_PRIVATE);
-        return preferences.getInt(prefTableId, 0);
+        overview.getOverview(false);
     }
 
     public void refreshDropdown(){
-        getTableNames();
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_dropdown_item, tableNames);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_dropdown_item, table.getTableNames());
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spSwitchLanguage.setAdapter(adapter);
 
-        spSwitchLanguage.setSelection(getTableIndex());
+        spSwitchLanguage.setSelection(table.getTableIndex());
     }
 
 
@@ -272,7 +145,7 @@ public class FragmentOverview extends Fragment implements View.OnClickListener, 
 
                 try {
                     if (Integer.parseInt(etId.getText().toString()) > 0 &&
-                            Integer.parseInt(etId.getText().toString()) < getTableSize()) {
+                            Integer.parseInt(etId.getText().toString()) < table.getSize()) {
                         Cursor cursor = database.rawQuery("SELECT * FROM " + tableNames.get(preferences.getInt(prefTableId, 0)) + " WHERE id ='" + etId.getText().toString() + "'", null);
                         cursor.moveToFirst();
 
@@ -303,7 +176,6 @@ public class FragmentOverview extends Fragment implements View.OnClickListener, 
         }
     }
 
-
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
         SharedPreferences prefTable = getActivity().getSharedPreferences(prefTableId, Context.MODE_PRIVATE);
@@ -314,17 +186,13 @@ public class FragmentOverview extends Fragment implements View.OnClickListener, 
 
         spSwitchLanguage.setSelection(i);
 
-        ViewGroup parent = (ViewGroup) scrollView.getParent();
-        parent.removeView(scrollView);
-
-        getOverview();
+        overview.deleteScrollView();
+        overview.getOverview(false);
     }
 
     @Override
     public void onNothingSelected(AdapterView<?> adapterView) {
-        ViewGroup parent = (ViewGroup) scrollView.getParent();
-        parent.removeView(scrollView);
-
-        getOverview();
+        overview.deleteScrollView();
+        overview.getOverview(false);
     }
 }
