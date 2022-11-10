@@ -14,7 +14,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-public class MainActivity2 extends AppCompatActivity{
+public class MainActivity extends AppCompatActivity{
     BottomNavigationView navigationView;
 
     final String prefFirstStart = "firststart";
