@@ -32,8 +32,6 @@ import java.util.ArrayList;
 
 public class FragmentOverview extends Fragment implements View.OnClickListener, AdapterView.OnItemSelectedListener {
 
-    public static final int bob = 1;
-
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
