@@ -41,6 +41,9 @@ public class MainActivity extends AppCompatActivity{
             createDatabase();
         }
 
+        Notifier notifier = new Notifier(getApplicationContext());
+        notifier.build();
+
         getStreak();
 
         getSupportFragmentManager().beginTransaction().replace(R.id.frame_container, new FragmentLearn()).commit();

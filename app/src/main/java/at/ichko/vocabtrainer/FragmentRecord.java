@@ -16,13 +16,14 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.Toast;
+
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+
 import java.io.IOException;
-import java.util.ArrayList;
 
 public class FragmentRecord extends Fragment implements View.OnClickListener {
 
@@ -40,8 +41,6 @@ public class FragmentRecord extends Fragment implements View.OnClickListener {
 
     private String mParam1;
     private String mParam2;
-
-    ArrayList<String> tableNames = new ArrayList<>();
 
     ConstraintLayout lytMid;
 
@@ -116,12 +115,10 @@ public class FragmentRecord extends Fragment implements View.OnClickListener {
     }
 
     public void startRecording(){
-        table.getTableNames();
         recorder = new MediaRecorder();
 
         fileName = getActivity().getExternalCacheDir().getAbsolutePath();
-        fileName += "/RecordAudio" + tableNames.get(table.getTableIndex()) + etRecordId.getText().toString() + ".3gp";
-
+        fileName += "/RecordAudio" + table.get(table.getTableIndex()) + etRecordId.getText().toString() + ".3gp";
 
         recorder.setAudioChannels(1);
         recorder.setAudioEncodingBitRate(16);
@@ -196,6 +193,7 @@ public class FragmentRecord extends Fragment implements View.OnClickListener {
                         Toast.makeText(getActivity().getApplicationContext(), "Permition requierd", Toast.LENGTH_SHORT).show();
                     else{
                        try {
+                           Log.d("RECORD ID: ", Integer.parseInt(etRecordId.getText().toString()) + "");
                            if (Integer.parseInt(etRecordId.getText().toString()) > 0 &&
                                    Integer.parseInt(etRecordId.getText().toString()) < table.getSize()) {
                                startRecording();

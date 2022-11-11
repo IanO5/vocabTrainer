@@ -128,9 +128,6 @@ public class FragmentLearn extends Fragment implements View.OnClickListener {
         table.getTableNames();
         spinner.refresh();
 
-        Notifier notifier = new Notifier(getActivity());
-        notifier.build();
-
         return rootView;
     }
 
