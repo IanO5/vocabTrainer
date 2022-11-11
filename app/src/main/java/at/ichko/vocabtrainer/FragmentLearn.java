@@ -69,6 +69,7 @@ public class FragmentLearn extends Fragment implements View.OnClickListener {
 
     LanguageSpinner spinner;
     Table table;
+    Vocab vocab;
 
     public FragmentLearn() {
 
@@ -119,12 +120,15 @@ public class FragmentLearn extends Fragment implements View.OnClickListener {
         btnCorrect.setOnClickListener(this);
         btnFalse.setOnClickListener(this);
 
+        vocabSound = new MediaPlayer();
+
         spinner = new LanguageSpinner(spLanguageSelect, getActivity(), () -> {
             btnCorrect.setVisibility(View.GONE);
             btnFalse.setVisibility(View.GONE);
             learn();}, () -> learn());
 
         table = new Table(getActivity());
+        vocab = new Vocab(getActivity());
 
         table.getTableNames();
         spinner.refresh();
@@ -139,34 +143,25 @@ public class FragmentLearn extends Fragment implements View.OnClickListener {
 
             btnShowTranslation.setVisibility(View.VISIBLE);
             SharedPreferences prefPlayRecord = getActivity().getSharedPreferences(prefSettingPlayRecord, Context.MODE_PRIVATE);
-            vocabStrength = new int[table.getSize() - 1];
 
-            boolean foundNewWord = false;
-            int id = 0;
-
-            while (!foundNewWord) {
-                if (!saveFalseId.isEmpty() && Math.random() > 0.5) {
-                    id = saveFalseId.get((int) (Math.random() * (saveFalseId.size() - 1)));
-                    idOfFalse = saveFalseId.indexOf(id);
-                    wasFalse = true;
-                    foundNewWord = true;
-                } else {
-                    id = (int) ((Math.random() * (table.getSize() - 1)) + 1);
-                    wasFalse = false;
-                    if (vocabStrength[id - 1] > 5) {
-                        foundNewWord = false;
-                    } else if (vocabStrength[id - 1] > 3) {
-                        if (Math.random() > 0.5) {
-                            foundNewWord = true;
-                        }
-                    } else {
-                        foundNewWord = true;
-                    }
-                }
-            }
+            int id = vocab.getRandom();
 
             currentId = id;
             tvVocabNr.setText("Vocab Nr.: " + id);
+            tvVocabStrength.setText("Vocab Strength: " + vocab.getStrength(id));
+
+            switch (vocab.getStrength(id)){
+                case FALSE:
+                case LOW:
+                    tvVocabStrength.setTextColor(Color.RED);
+                    break;
+                case MEDIUM:
+                    tvVocabStrength.setTextColor(Color.YELLOW);
+                    break;
+                case STRONG:
+                    tvVocabStrength.setTextColor(Color.GREEN);
+                    break;
+            }
 
             Cursor cursor = database.rawQuery("SELECT * FROM " + table.get(table.getTableIndex()) + " WHERE id = '" + id + "'", null);
             cursor.moveToFirst();
@@ -235,7 +230,7 @@ public class FragmentLearn extends Fragment implements View.OnClickListener {
 
         cursor.moveToFirst();
 
-        saveFalseId.add(Integer.parseInt(cursor.getString(0)));
+        vocab.setStrength(VocabStrength.FALSE, currentId);
 
         maxScore++;
 
@@ -258,11 +253,20 @@ public class FragmentLearn extends Fragment implements View.OnClickListener {
         SharedPreferences pref = getActivity().getSharedPreferences(prefSettingAnimation, Context.MODE_PRIVATE);
         SharedPreferences prefSound = getActivity().getSharedPreferences(prefSettingSound, Context.MODE_PRIVATE);
 
-        if(wasFalse) {
-            saveFalseId.remove(idOfFalse);
-        } else {
-            vocabStrength[currentId-1]++;
+        switch (vocab.getStrength(currentId)){
+            case LOW:
+                vocab.setStrength(VocabStrength.MEDIUM, currentId);
+                break;
+            case FALSE:
+                vocab.setStrength(VocabStrength.LOW, currentId);
+                break;
+            case MEDIUM:
+                vocab.setStrength(VocabStrength.STRONG, currentId);
+                break;
+            case STRONG:
+                break;
         }
+
         maxScore++;
         score++;
 

@@ -114,8 +114,8 @@ public class FragmentOverview extends Fragment implements View.OnClickListener {
         SQLiteDatabase database = getActivity().openOrCreateDatabase(databaseName, Context.MODE_PRIVATE, null);
         SharedPreferences preferences = getActivity().getSharedPreferences(prefTableId, Context.MODE_PRIVATE);
 
-        database.execSQL("UPDATE " + tableNames.get(preferences.getInt(prefTableId, 0)) + " SET word ='" + etWord.getText().toString() + "' WHERE id ='" + etId.getText().toString() + "'");
-        database.execSQL("UPDATE " + tableNames.get(preferences.getInt(prefTableId, 0)) + " SET translation ='" + etTranslation.getText().toString() + "' WHERE id ='" + etId.getText().toString() + "'");
+        database.execSQL("UPDATE " + table.get(table.getTableIndex()) + " SET word ='" + etWord.getText().toString() + "' WHERE id ='" + etId.getText().toString() + "'");
+        database.execSQL("UPDATE " + table.get(table.getTableIndex()) + " SET translation ='" + etTranslation.getText().toString() + "' WHERE id ='" + etId.getText().toString() + "'");
 
         etId.setText("");
         etTranslation.setText("");
@@ -139,12 +139,11 @@ public class FragmentOverview extends Fragment implements View.OnClickListener {
                 break;
             case R.id.btnSubmitId:
                 SQLiteDatabase database = getActivity().openOrCreateDatabase(databaseName, Context.MODE_PRIVATE, null);
-                SharedPreferences preferences = getActivity().getSharedPreferences(prefTableId, Context.MODE_PRIVATE);
 
                 try {
                     if (Integer.parseInt(etId.getText().toString()) > 0 &&
                             Integer.parseInt(etId.getText().toString()) < table.getSize()) {
-                        Cursor cursor = database.rawQuery("SELECT * FROM " + tableNames.get(preferences.getInt(prefTableId, 0)) + " WHERE id ='" + etId.getText().toString() + "'", null);
+                        Cursor cursor = database.rawQuery("SELECT * FROM " + table.get(table.getTableIndex()) + " WHERE id ='" + etId.getText().toString() + "'", null);
                         cursor.moveToFirst();
 
                         etWord.setText(cursor.getString(1));

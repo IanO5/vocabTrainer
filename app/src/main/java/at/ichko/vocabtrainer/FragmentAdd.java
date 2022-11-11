@@ -106,7 +106,7 @@ public class FragmentAdd extends Fragment implements View.OnClickListener {
             i = 1;
         }
 
-        database.execSQL("INSERT INTO " + table.get(table.getTableIndex()) + " VALUES('" + i + "', '" + word + "', '" + translation + "')");
+        database.execSQL("INSERT INTO " + table.get(table.getTableIndex()) + " VALUES('" + i + "', '" + word + "', '" + translation + "', '" + VocabStrength.LOW + "')");
 
         refreshVocabNr();
 
@@ -116,7 +116,7 @@ public class FragmentAdd extends Fragment implements View.OnClickListener {
 
     public void addLanguage(String languageName){
         SQLiteDatabase database = getActivity().openOrCreateDatabase(databaseName, Context.MODE_PRIVATE, null);
-        database.execSQL("CREATE TABLE " + languageName + " (id INTEGER, word TEXT, translation TEXT)");
+        database.execSQL("CREATE TABLE " + languageName + " (id INTEGER, word TEXT, translation TEXT, strength TEXT)");
 
         database.close();
     }
@@ -158,7 +158,7 @@ public class FragmentAdd extends Fragment implements View.OnClickListener {
             case R.id.btnAddNewLanguage:
                 boolean existing = false;
 
-                for(int i = 0; i < table.getSize(); i++){
+                for(int i = 0; i < table.size(); i++){
                     if(table.get(i).equalsIgnoreCase(etNewLanguage.getText().toString())){
                         existing = true;
                         break;

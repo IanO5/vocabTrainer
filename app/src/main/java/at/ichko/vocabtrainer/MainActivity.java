@@ -2,12 +2,15 @@ package at.ichko.vocabtrainer;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+
+import android.content.ContentValues;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity{
@@ -26,7 +29,6 @@ public class MainActivity extends AppCompatActivity{
         navigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation_bar);
         navigationView.setBackground(null);
         navigationView.getMenu().getItem(2).setChecked(true);
-
 
         if(firstAppStart()){
             createDatabase();
@@ -71,7 +73,7 @@ public class MainActivity extends AppCompatActivity{
 
     public void createDatabase () {
         SQLiteDatabase database = openOrCreateDatabase(databaseName, MODE_PRIVATE, null);
-        database.execSQL("CREATE TABLE " + tableName + " (id INTEGER, word TEXT, translation TEXT)");
+        database.execSQL("CREATE TABLE " + tableName + " (id INTEGER, word TEXT, translation TEXT, strength TEXT)");
 
         database.close();
     }

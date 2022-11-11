@@ -18,6 +18,7 @@ public class Table {
 
     public Table(Context context){
         this.context = context;
+        getTableNames();
     }
 
     public ArrayList<String> getTableNames(){
@@ -39,6 +40,10 @@ public class Table {
 
     public String get(int num){
         return tableNames.get(num);
+    }
+
+    public int size(){
+        return tableNames.size();
     }
 
     public int getSize(){

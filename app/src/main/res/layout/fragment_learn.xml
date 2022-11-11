@@ -83,31 +83,44 @@
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 >
-                <TextView
-                    android:id="@+id/tvVocabStrength"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:id="@+id/lytOrientation"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Vocab Strength"
                     app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toTopOf="@id/tvWord"
                     app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintBottom_toTopOf="@id/tvWord"
-                    app:layout_constraintRight_toLeftOf="@id/tvVoabNr"/>
-
-                <TextView
-                    android:id="@+id/tvVoabNr"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintLeft_toRightOf="@id/tvVocabStrength"
                     app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintBottom_toTopOf="@id/tvWord"
-                    android:text="Vocab Nr."/>
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/tvVocabStrength"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Vocab Strength"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintBottom_toTopOf="@id/tvWord"
+                        app:layout_constraintRight_toLeftOf="@id/tvVoabNr"/>
+
+                    <TextView
+                        android:id="@+id/tvVoabNr"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintLeft_toRightOf="@id/tvVocabStrength"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintBottom_toTopOf="@id/tvWord"
+                        android:text="Vocab Nr."
+                        android:gravity="right"/>
+
+                </LinearLayout>
 
                 <TextView
                     android:id="@+id/tvWord"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:layout_constraintTop_toBottomOf="@id/tvVoabNr"
+                    app:layout_constraintTop_toBottomOf="@id/lytOrientation"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintBottom_toTopOf="@id/tvTranslation"
