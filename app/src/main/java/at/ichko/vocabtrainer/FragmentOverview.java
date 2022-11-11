@@ -14,7 +14,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
-import java.util.ArrayList;
 
 public class FragmentOverview extends Fragment implements View.OnClickListener {
 
@@ -35,8 +34,6 @@ public class FragmentOverview extends Fragment implements View.OnClickListener {
     ConstraintLayout lytMid;
 
     Spinner spSwitchLanguage;
-
-    ArrayList<String> tableNames = new ArrayList<>();
 
     final String databaseName = "languagedatabase.db";
     final String prefTableId = "tableid";

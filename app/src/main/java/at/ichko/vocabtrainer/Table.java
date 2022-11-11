@@ -6,7 +6,6 @@ import android.database.Cursor;
 import android.database.CursorIndexOutOfBoundsException;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
-
 import java.util.ArrayList;
 
 public class Table {
@@ -57,7 +56,7 @@ public class Table {
 
             i = cursor.getInt(0) + 1;
         } catch (CursorIndexOutOfBoundsException ex){
-            Log.d("ERROR: ", "Noch keine Wörter vorhanden");
+            Log.d("ERROR: ", "No words found yet");
             i = 0;
         }
 

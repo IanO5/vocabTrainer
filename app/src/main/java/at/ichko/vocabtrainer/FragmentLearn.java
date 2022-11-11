@@ -17,13 +17,9 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
-
 import androidx.fragment.app.Fragment;
-
 import com.airbnb.lottie.LottieAnimationView;
-
 import java.io.IOException;
-import java.util.ArrayList;
 
 public class FragmentLearn extends Fragment implements View.OnClickListener {
 
@@ -52,10 +48,6 @@ public class FragmentLearn extends Fragment implements View.OnClickListener {
 
     MediaPlayer vocabSound;
 
-    int[] vocabStrength;
-    ArrayList<Integer> saveFalseId = new ArrayList<>();
-
-    int idOfFalse = 0;
     int currentId;
     int maxScore, score;
 
@@ -130,7 +122,6 @@ public class FragmentLearn extends Fragment implements View.OnClickListener {
 
         table.getTableNames();
         spinner.refresh();
-        //learn();
 
         return rootView;
     }
