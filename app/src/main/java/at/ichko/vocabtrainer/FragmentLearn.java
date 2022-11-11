@@ -120,8 +120,6 @@ public class FragmentLearn extends Fragment implements View.OnClickListener {
         btnCorrect.setOnClickListener(this);
         btnFalse.setOnClickListener(this);
 
-        vocabSound = new MediaPlayer();
-
         spinner = new LanguageSpinner(spLanguageSelect, getActivity(), () -> {
             btnCorrect.setVisibility(View.GONE);
             btnFalse.setVisibility(View.GONE);
