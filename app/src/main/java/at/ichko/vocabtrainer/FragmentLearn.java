@@ -1,7 +1,9 @@
 package at.ichko.vocabtrainer;
 
 import android.annotation.SuppressLint;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -19,7 +21,10 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import androidx.fragment.app.Fragment;
 import com.airbnb.lottie.LottieAnimationView;
+import com.allyants.notifyme.NotifyMe;
+
 import java.io.IOException;
+import java.util.Calendar;
 
 public class FragmentLearn extends Fragment implements View.OnClickListener {
 
@@ -122,6 +127,9 @@ public class FragmentLearn extends Fragment implements View.OnClickListener {
 
         table.getTableNames();
         spinner.refresh();
+
+        Notifier notifier = new Notifier(getActivity());
+        notifier.build();
 
         return rootView;
     }

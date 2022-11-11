@@ -1,10 +1,20 @@
 package at.ichko.vocabtrainer;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.fragment.app.Fragment;
+
+import android.app.AlarmManager;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+
+import com.allyants.notifyme.NotifyMe;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
