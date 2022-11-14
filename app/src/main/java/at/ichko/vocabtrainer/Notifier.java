@@ -21,8 +21,8 @@ public class Notifier {
 
         notifyMe.title("Come back learning!");
         notifyMe.content("Learn some new words today and reach your goals.");
-        notifyMe.delay(1000 * 60 * 50); // 50 min delay
-        notifyMe.rrule("FREQ=MINUTELY;INTERVAL=600;COUNT=4");
+        notifyMe.delay(1000 * 60 * 60 * 12); // 12h delay
+        notifyMe.rrule("FREQ=MINUTELY;INTERVAL=720;COUNT=2");
         notifyMe.small_icon(R.raw.alert);//Icon resource by ID
         notifyMe.addAction(intent, "Open App");
     }

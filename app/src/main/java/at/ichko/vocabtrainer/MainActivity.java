@@ -41,8 +41,14 @@ public class MainActivity extends AppCompatActivity{
             createDatabase();
         }
 
-        Notifier notifier = new Notifier(getApplicationContext());
-        notifier.build();
+        DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+        Calendar today = Calendar.getInstance();
+        String strToday = dateFormat.format(today.getTime());
+
+        if(!getLastLogin().equals(strToday)){
+            Notifier notifier = new Notifier(getApplicationContext());
+            notifier.build();
+        }
 
         getStreak();
 
