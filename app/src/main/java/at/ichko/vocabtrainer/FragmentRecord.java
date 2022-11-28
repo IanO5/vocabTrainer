@@ -199,6 +199,7 @@ public class FragmentRecord extends Fragment implements View.OnClickListener {
                            if (Integer.parseInt(etRecordId.getText().toString()) > 0 &&
                                    Integer.parseInt(etRecordId.getText().toString()) < table.getSize()) {
                                startRecording();
+                               etRecordId.setEnabled(false);
 
                                try {
                                    keyboard.hide();
@@ -217,6 +218,7 @@ public class FragmentRecord extends Fragment implements View.OnClickListener {
                 }
                 else {
                     stopRecording();
+                    etRecordId.setEnabled(true);
                     etRecordId.setText("");
                     btnRecord.setImageResource(R.raw.mic);
                     Toast.makeText(getActivity().getApplicationContext(), "Successfully Saved", Toast.LENGTH_SHORT).show();
