@@ -7,13 +7,18 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
+
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
+
+import java.util.Calendar;
 
 public class FragmentOverview extends Fragment implements View.OnClickListener {
 
@@ -34,6 +39,8 @@ public class FragmentOverview extends Fragment implements View.OnClickListener {
     ConstraintLayout lytMid;
 
     Spinner spSwitchLanguage;
+
+    Keyboard keyboard;
 
     final String databaseName = "languagedatabase.db";
     final String prefTableId = "tableid";
@@ -87,6 +94,7 @@ public class FragmentOverview extends Fragment implements View.OnClickListener {
 
         overview = new Overview(lytMid, getActivity());
         table = new Table(getActivity());
+        keyboard = new Keyboard(getContext(), getActivity());
 
         ItemNothingSelectExecution ex = new ItemNothingSelectExecution() {
             @Override
@@ -138,6 +146,12 @@ public class FragmentOverview extends Fragment implements View.OnClickListener {
                 SQLiteDatabase database = getActivity().openOrCreateDatabase(databaseName, Context.MODE_PRIVATE, null);
 
                 try {
+                    keyboard.hide();
+                } catch (Exception ex) {
+                    Log.d("ALARM: ", "Exception triggerd! Could not open keyboard.");
+                }
+
+                try {
                     if (Integer.parseInt(etId.getText().toString()) > 0 &&
                             Integer.parseInt(etId.getText().toString()) < table.getSize()) {
                         Cursor cursor = database.rawQuery("SELECT * FROM " + table.get(table.getTableIndex()) + " WHERE id ='" + etId.getText().toString() + "'", null);
@@ -162,6 +176,13 @@ public class FragmentOverview extends Fragment implements View.OnClickListener {
             case R.id.btnSubmit:
                 makeChangeInDatabase();
                 Toast.makeText(getActivity().getApplicationContext(), "Changed Successfully", Toast.LENGTH_SHORT).show();
+
+                try {
+                    keyboard.hide();
+                } catch (Exception ex) {
+                    Log.d("ALARM: ", "Exception triggerd! Could not open keyboard.");
+                }
+
                 btnEdit.setVisibility(View.VISIBLE);
                 etTranslation.setVisibility(View.GONE);
                 etWord.setVisibility(View.GONE);

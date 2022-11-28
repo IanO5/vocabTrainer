@@ -49,6 +49,7 @@ public class FragmentRecord extends Fragment implements View.OnClickListener {
     String fileName; //File Name of the Sound file that gets recorded
 
     Spinner spLanguageSelect;
+    Keyboard keyboard;
 
     ImageButton btnRecord;
 
@@ -106,6 +107,7 @@ public class FragmentRecord extends Fragment implements View.OnClickListener {
             overview.deleteScrollView();
             overview.getOverview(true);
         });
+        keyboard = new Keyboard(getContext(), getActivity());
 
         table.getTableNames();
         spinner.refresh();
@@ -197,6 +199,13 @@ public class FragmentRecord extends Fragment implements View.OnClickListener {
                            if (Integer.parseInt(etRecordId.getText().toString()) > 0 &&
                                    Integer.parseInt(etRecordId.getText().toString()) < table.getSize()) {
                                startRecording();
+
+                               try {
+                                   keyboard.hide();
+                               } catch (Exception ex) {
+                                   Log.d("ALARM: ", "Exception triggerd! Could not open keyboard.");
+                               }
+
                                btnRecord.setImageResource(R.drawable.ic_baseline_stop_24);
                            } else {
                                Toast.makeText(getActivity().getApplicationContext(), "Check your inputs", Toast.LENGTH_SHORT).show();

@@ -6,9 +6,11 @@ import android.database.CursorIndexOutOfBoundsException;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -34,6 +36,8 @@ public class FragmentAdd extends Fragment implements View.OnClickListener {
     Button btnAddLanguage;
 
     Spinner spSelectedLanguage;
+
+    Keyboard keyboard;
 
     final String databaseName = "languagedatabase.db";
 
@@ -83,6 +87,7 @@ public class FragmentAdd extends Fragment implements View.OnClickListener {
 
         table = new Table(getActivity());
         spinner = new LanguageSpinner(spSelectedLanguage, getActivity(), () -> refreshVocabNr(), () -> refreshVocabNr());
+        keyboard = new Keyboard(getContext(), getActivity());
 
         spinner.refresh();
         refreshVocabNr();
@@ -145,6 +150,13 @@ public class FragmentAdd extends Fragment implements View.OnClickListener {
                 if (etTranslation.getText().toString().length() > 0 && etWord.getText().toString().length() > 0) {
                     addWord(etWord.getText().toString(), etTranslation.getText().toString());
                     Toast.makeText(getActivity(), "Added successfully", Toast.LENGTH_SHORT).show();
+
+                    try {
+                        keyboard.hide();
+                    } catch (Exception ex) {
+                        Log.d("ALARM: ", "Exception triggerd! Could not open keyboard.");
+                    }
+
                     etWord.setText("");
                     etTranslation.setText("");
                     refreshVocabNr();
@@ -166,6 +178,13 @@ public class FragmentAdd extends Fragment implements View.OnClickListener {
                 if(etNewLanguage.getText().toString().length() > 0 && !existing){
                     addLanguage(etNewLanguage.getText().toString());
                     Toast.makeText(getActivity(), "Added successfully", Toast.LENGTH_SHORT).show();
+
+                    try {
+                        keyboard.hide();
+                    } catch (Exception ex) {
+                        Log.d("ALARM: ", "Exception triggerd! Could not open keyboard.");
+                    }
+
                     etNewLanguage.setText("");
                     spinner.refresh();
                 }

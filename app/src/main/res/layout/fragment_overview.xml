@@ -130,7 +130,9 @@
                     android:layout_marginRight="10dp"
                     android:background="@drawable/border"
                     android:hint="Id of Vocab"
+                    android:inputType="number"
                     android:maxLines="1"
+                    android:imeOptions="actionDone"
                     android:visibility="gone"
                     />
 
@@ -168,6 +170,7 @@
                     android:hint="Change Word"
                     android:inputType="text"
                     android:maxLines="1"
+                    android:imeOptions="actionNext"
                     android:visibility="gone"
                     />
 
@@ -188,6 +191,7 @@
                     android:hint="Change Translation"
                     android:inputType="text"
                     android:maxLines="1"
+                    android:imeOptions="actionDone"
                     android:visibility="gone"
                     />
 
