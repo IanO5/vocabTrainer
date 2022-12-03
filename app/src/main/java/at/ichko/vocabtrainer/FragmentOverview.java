@@ -42,9 +42,6 @@ public class FragmentOverview extends Fragment implements View.OnClickListener {
 
     Keyboard keyboard;
 
-    final String databaseName = "languagedatabase.db";
-    final String prefTableId = "tableid";
-
     Overview overview;
     Table table;
     LanguageSpinner spinner;
@@ -116,8 +113,8 @@ public class FragmentOverview extends Fragment implements View.OnClickListener {
     }
 
     public void makeChangeInDatabase () {
-        SQLiteDatabase database = getActivity().openOrCreateDatabase(databaseName, Context.MODE_PRIVATE, null);
-        SharedPreferences preferences = getActivity().getSharedPreferences(prefTableId, Context.MODE_PRIVATE);
+        SQLiteDatabase database = getActivity().openOrCreateDatabase(Constants.DATABASE_NAME, Context.MODE_PRIVATE, null);
+        SharedPreferences preferences = getActivity().getSharedPreferences(Constants.PREF_TABLE_ID, Context.MODE_PRIVATE);
 
         database.execSQL("UPDATE " + table.get(table.getTableIndex()) + " SET word ='" + etWord.getText().toString() + "' WHERE id ='" + etId.getText().toString() + "'");
         database.execSQL("UPDATE " + table.get(table.getTableIndex()) + " SET translation ='" + etTranslation.getText().toString() + "' WHERE id ='" + etId.getText().toString() + "'");
@@ -143,7 +140,7 @@ public class FragmentOverview extends Fragment implements View.OnClickListener {
                 btnSubmitId.setVisibility(View.VISIBLE);
                 break;
             case R.id.btnSubmitId:
-                SQLiteDatabase database = getActivity().openOrCreateDatabase(databaseName, Context.MODE_PRIVATE, null);
+                SQLiteDatabase database = getActivity().openOrCreateDatabase(Constants.DATABASE_NAME, Context.MODE_PRIVATE, null);
 
                 try {
                     keyboard.hide();

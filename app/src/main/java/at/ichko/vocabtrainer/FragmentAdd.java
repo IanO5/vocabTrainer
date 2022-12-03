@@ -39,8 +39,6 @@ public class FragmentAdd extends Fragment implements View.OnClickListener {
 
     Keyboard keyboard;
 
-    final String databaseName = "languagedatabase.db";
-
     LanguageSpinner spinner;
     Table table;
 
@@ -96,7 +94,7 @@ public class FragmentAdd extends Fragment implements View.OnClickListener {
     }
 
     public void addWord(String word, String translation){
-        SQLiteDatabase database = getActivity().openOrCreateDatabase(databaseName, Context.MODE_PRIVATE, null);
+        SQLiteDatabase database = getActivity().openOrCreateDatabase(Constants.DATABASE_NAME, Context.MODE_PRIVATE, null);
         int i = 0;
         Cursor cursor = null;
         try {
@@ -118,7 +116,7 @@ public class FragmentAdd extends Fragment implements View.OnClickListener {
     }
 
     public void addLanguage(String languageName){
-        SQLiteDatabase database = getActivity().openOrCreateDatabase(databaseName, Context.MODE_PRIVATE, null);
+        SQLiteDatabase database = getActivity().openOrCreateDatabase(Constants.DATABASE_NAME, Context.MODE_PRIVATE, null);
         database.execSQL("CREATE TABLE " + languageName + " (id INTEGER, word TEXT, translation TEXT, strength TEXT)");
 
         database.close();
@@ -126,7 +124,7 @@ public class FragmentAdd extends Fragment implements View.OnClickListener {
 
     public void refreshVocabNr(){
         table.getTableNames();
-        SQLiteDatabase database = getActivity().openOrCreateDatabase(databaseName, Context.MODE_PRIVATE, null);
+        SQLiteDatabase database = getActivity().openOrCreateDatabase(Constants.DATABASE_NAME, Context.MODE_PRIVATE, null);
         try {
             Cursor cursor = database.rawQuery("SELECT * FROM " + table.get(table.getTableIndex()), null);
             cursor.moveToLast();

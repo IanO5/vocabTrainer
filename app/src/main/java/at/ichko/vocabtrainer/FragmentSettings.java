@@ -22,11 +22,6 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
     Switch swSound;
     Switch swPlayRecord;
 
-    final String prefSettingAnimation = "settinganimation";
-    final String prefSettingSound = "settingsound";
-    final String prefSettingPlayRecord = "settingplayrecord";
-    final String prefStreak = "streakdays";
-
     SharedPreferences prefSound;
     SharedPreferences pref;
     SharedPreferences prefPlayRecord;
@@ -70,15 +65,15 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
         swSound.setOnClickListener(this);
         swPlayRecord.setOnClickListener(this);
 
-        pref = getActivity().getSharedPreferences(prefSettingAnimation, Context.MODE_PRIVATE);
-        prefSound = getActivity().getSharedPreferences(prefSettingSound, Context.MODE_PRIVATE);
-        prefPlayRecord = getActivity().getSharedPreferences(prefSettingPlayRecord, Context.MODE_PRIVATE);
+        pref = getActivity().getSharedPreferences(Constants.PREF_SETTING_ANIMATION, Context.MODE_PRIVATE);
+        prefSound = getActivity().getSharedPreferences(Constants.PREF_SETTING_SOUND, Context.MODE_PRIVATE);
+        prefPlayRecord = getActivity().getSharedPreferences(Constants.PERF_SETTING_PLAY_RECORD, Context.MODE_PRIVATE);
 
-        if(!pref.getBoolean(prefSettingAnimation, true))
+        if(!pref.getBoolean(Constants.PREF_SETTING_ANIMATION, true))
             swAnimation.setChecked(false);
-        if(!prefSound.getBoolean(prefSettingSound, true))
+        if(!prefSound.getBoolean(Constants.PREF_SETTING_SOUND, true))
             swSound.setChecked(false);
-        if(!prefPlayRecord.getBoolean(prefSettingPlayRecord, true))
+        if(!prefPlayRecord.getBoolean(Constants.PERF_SETTING_PLAY_RECORD, true))
             swPlayRecord.setChecked(false);
 
         tvStreak.setText(streakDays().toString());
@@ -91,19 +86,19 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
         SharedPreferences.Editor editorSound = prefSound.edit();
         SharedPreferences.Editor editorPlayRecord = prefPlayRecord.edit();
 
-        editor.putBoolean(prefSettingAnimation, swAnimation.isChecked());
+        editor.putBoolean(Constants.PREF_SETTING_ANIMATION, swAnimation.isChecked());
         editor.commit();
 
-        editorSound.putBoolean(prefSettingSound, swSound.isChecked());
+        editorSound.putBoolean(Constants.PREF_SETTING_SOUND, swSound.isChecked());
         editorSound.commit();
 
-        editorPlayRecord.putBoolean(prefSettingPlayRecord, swPlayRecord.isChecked());
+        editorPlayRecord.putBoolean(Constants.PERF_SETTING_PLAY_RECORD, swPlayRecord.isChecked());
         editorPlayRecord.commit();
     }
 
     public Integer streakDays(){
-        SharedPreferences preferences = getActivity().getSharedPreferences(prefStreak, Context.MODE_PRIVATE);
-        return preferences.getInt(prefStreak, 1);
+        SharedPreferences preferences = getActivity().getSharedPreferences(Constants.PREF_STREAK, Context.MODE_PRIVATE);
+        return preferences.getInt(Constants.PREF_STREAK, 1);
     }
 
     @Override

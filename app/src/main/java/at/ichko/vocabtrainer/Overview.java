@@ -21,8 +21,6 @@ import java.util.ArrayList;
 
 public class Overview {
 
-    private final String databaseName = "languagedatabase.db";
-    private final String prefTableId = "tableid";
     private Context context;
     private Table table;
 
@@ -38,13 +36,13 @@ public class Overview {
     }
 
     public void getOverview(boolean record){
-        SQLiteDatabase database = context.openOrCreateDatabase(databaseName, Context.MODE_PRIVATE, null);
-        SharedPreferences preferences = context.getSharedPreferences(prefTableId, Context.MODE_PRIVATE);
+        SQLiteDatabase database = context.openOrCreateDatabase(Constants.DATABASE_NAME, Context.MODE_PRIVATE, null);
+        SharedPreferences preferences = context.getSharedPreferences(Constants.PREF_TABLE_ID, Context.MODE_PRIVATE);
         int count = 0;
         Cursor cursorLength = null;
 
         try {
-            cursorLength = database.rawQuery("SELECT * FROM " + table.get(preferences.getInt(prefTableId, 0)), null);
+            cursorLength = database.rawQuery("SELECT * FROM " + table.get(preferences.getInt(Constants.PREF_TABLE_ID, 0)), null);
             cursorLength.moveToLast();
 
             count = cursorLength.getInt(0) + 1;
@@ -58,7 +56,7 @@ public class Overview {
         ArrayList<String> allStrengths = new ArrayList<>();
 
         for(int i = 1; i < count ; i++){
-            Cursor cursor = database.rawQuery("SELECT * FROM " + table.get(preferences.getInt(prefTableId, 0)) + " WHERE id = '" + i + "'", null);
+            Cursor cursor = database.rawQuery("SELECT * FROM " + table.get(preferences.getInt(Constants.PREF_TABLE_ID, 0)) + " WHERE id = '" + i + "'", null);
             cursor.moveToFirst();
 
             allWords.add(cursor.getString(1));

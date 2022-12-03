@@ -12,10 +12,8 @@ public class LanguageSpinner implements AdapterView.OnItemSelectedListener {
     private Context context;
     private Spinner spinner;
     private Table table;
-    ItemSelectExecution itemSelected;
-    ItemNothingSelectExecution nothingSelected;
-
-    private final String prefTableId = "tableid";
+    private ItemSelectExecution itemSelected;
+    private ItemNothingSelectExecution nothingSelected;
 
     public LanguageSpinner(Spinner spinner, Context context, ItemSelectExecution e, ItemNothingSelectExecution nothingSelected){
         this.context = context;
@@ -36,10 +34,10 @@ public class LanguageSpinner implements AdapterView.OnItemSelectedListener {
 
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-        SharedPreferences prefTable = context.getSharedPreferences(prefTableId, Context.MODE_PRIVATE);
+        SharedPreferences prefTable = context.getSharedPreferences(Constants.PREF_TABLE_ID, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefTable.edit();
 
-        editor.putInt(prefTableId, i);
+        editor.putInt(Constants.PREF_TABLE_ID, i);
         editor.commit();
 
         spinner.setSelection(i);

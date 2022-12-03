@@ -6,6 +6,7 @@ import android.content.Intent;
 import com.allyants.notifyme.NotifyMe;
 
 public class Notifier {
+
     private Context context;
     private NotifyMe.Builder notifyMe;
 

@@ -23,12 +23,6 @@ import java.util.Calendar;
 public class MainActivity extends AppCompatActivity{
     BottomNavigationView navigationView;
 
-    final String prefFirstStart = "firststart";
-    final String databaseName = "languagedatabase.db";
-    final String tableName = "firsttable";
-    final String prefLastLogin = "lastlogin";
-    final String prefStreak = "streakdays";
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,11 +68,11 @@ public class MainActivity extends AppCompatActivity{
     }
 
     public boolean firstAppStart () {
-        SharedPreferences preferences = getSharedPreferences(prefFirstStart, MODE_PRIVATE);
+        SharedPreferences preferences = getSharedPreferences(Constants.PREF_FIRST_START, MODE_PRIVATE);
 
-        if (preferences.getBoolean(prefFirstStart, true)) {
+        if (preferences.getBoolean(Constants.PREF_FIRST_START, true)) {
             SharedPreferences.Editor editor = preferences.edit();
-            editor.putBoolean(prefFirstStart, false);
+            editor.putBoolean(Constants.PREF_FIRST_START, false);
             editor.commit();
 
             return true;
@@ -88,8 +82,8 @@ public class MainActivity extends AppCompatActivity{
     }
 
     public void createDatabase () {
-        SQLiteDatabase database = openOrCreateDatabase(databaseName, MODE_PRIVATE, null);
-        database.execSQL("CREATE TABLE " + tableName + " (id INTEGER, word TEXT, translation TEXT, strength TEXT)");
+        SQLiteDatabase database = openOrCreateDatabase(Constants.DATABASE_NAME, MODE_PRIVATE, null);
+        database.execSQL("CREATE TABLE " + Constants.TABLE_NAME + " (id INTEGER, word TEXT, translation TEXT, strength TEXT)");
 
         database.close();
     }
@@ -119,28 +113,28 @@ public class MainActivity extends AppCompatActivity{
     }
 
     public String getLastLogin(){
-        SharedPreferences lastLogin = getSharedPreferences(prefLastLogin, MODE_PRIVATE);
-        return lastLogin.getString(prefLastLogin, null);
+        SharedPreferences lastLogin = getSharedPreferences(Constants.PREF_LAST_LOGIN, MODE_PRIVATE);
+        return lastLogin.getString(Constants.PREF_LAST_LOGIN, null);
     }
 
     public void increaseStreakDays(){
-        SharedPreferences preferences = getSharedPreferences(prefStreak, MODE_PRIVATE);
+        SharedPreferences preferences = getSharedPreferences(Constants.PREF_STREAK, MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
-        editor.putInt(prefStreak, preferences.getInt(prefStreak, 0) + 1);
+        editor.putInt(Constants.PREF_STREAK, preferences.getInt(Constants.PREF_STREAK, 0) + 1);
         editor.commit();
     }
 
     public void resetStreak(){
-        SharedPreferences preferences = getSharedPreferences(prefStreak, MODE_PRIVATE);
+        SharedPreferences preferences = getSharedPreferences(Constants.PREF_STREAK, MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
-        editor.putInt(prefStreak, 1);
+        editor.putInt(Constants.PREF_STREAK, 1);
         editor.commit();
     }
 
     public void setLastLoginDate(String date){
-        SharedPreferences lastLogin = getSharedPreferences(prefLastLogin, MODE_PRIVATE);
+        SharedPreferences lastLogin = getSharedPreferences(Constants.PREF_LAST_LOGIN, MODE_PRIVATE);
         SharedPreferences.Editor editor = lastLogin.edit();
-        editor.putString(prefLastLogin, date);
+        editor.putString(Constants.PREF_LAST_LOGIN, date);
         editor.commit();
     }
 

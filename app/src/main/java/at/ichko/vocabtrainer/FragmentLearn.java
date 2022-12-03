@@ -56,13 +56,7 @@ public class FragmentLearn extends Fragment implements View.OnClickListener {
     int currentId;
     int maxScore, score;
 
-    boolean wasFalse = false;
     boolean isSwitched = false;
-
-    final String databaseName = "languagedatabase.db";
-    final String prefSettingPlayRecord = "settingplayrecord";
-    final String prefSettingAnimation = "settinganimation";
-    final String prefSettingSound = "settingsound";
 
     LanguageSpinner spinner;
     Table table;
@@ -132,11 +126,11 @@ public class FragmentLearn extends Fragment implements View.OnClickListener {
     }
 
     public void learn() {
-        SQLiteDatabase database = getActivity().openOrCreateDatabase(databaseName, Context.MODE_PRIVATE, null);
+        SQLiteDatabase database = getActivity().openOrCreateDatabase(Constants.DATABASE_NAME, Context.MODE_PRIVATE, null);
         if (table.getSize() > 0) {
 
             btnShowTranslation.setVisibility(View.VISIBLE);
-            SharedPreferences prefPlayRecord = getActivity().getSharedPreferences(prefSettingPlayRecord, Context.MODE_PRIVATE);
+            SharedPreferences prefPlayRecord = getActivity().getSharedPreferences(Constants.PERF_SETTING_PLAY_RECORD, Context.MODE_PRIVATE);
 
             int id = vocab.getRandom();
 
@@ -172,7 +166,7 @@ public class FragmentLearn extends Fragment implements View.OnClickListener {
             } else {
                 tvWord.setText(cursor.getString(2));
                 tvTranslation.setText(cursor.getString(1));
-                if (prefPlayRecord.getBoolean(prefSettingPlayRecord, true)) {
+                if (prefPlayRecord.getBoolean(Constants.PERF_SETTING_PLAY_RECORD, true)) {
                     vocabSound = new MediaPlayer();
 
                     try {
@@ -210,9 +204,9 @@ public class FragmentLearn extends Fragment implements View.OnClickListener {
     }
 
     public void falseTranslation() {
-        SQLiteDatabase database = getActivity().openOrCreateDatabase(databaseName, Context.MODE_PRIVATE, null);
-        SharedPreferences pref = getActivity().getSharedPreferences(prefSettingAnimation, Context.MODE_PRIVATE);
-        SharedPreferences prefSound = getActivity().getSharedPreferences(prefSettingSound, Context.MODE_PRIVATE);
+        SQLiteDatabase database = getActivity().openOrCreateDatabase(Constants.DATABASE_NAME, Context.MODE_PRIVATE, null);
+        SharedPreferences pref = getActivity().getSharedPreferences(Constants.PREF_SETTING_ANIMATION, Context.MODE_PRIVATE);
+        SharedPreferences prefSound = getActivity().getSharedPreferences(Constants.PREF_SETTING_SOUND, Context.MODE_PRIVATE);
         Cursor cursor;
 
         if (!isSwitched) {
@@ -231,12 +225,12 @@ public class FragmentLearn extends Fragment implements View.OnClickListener {
         cursor.close();
         database.close();
 
-        if (prefSound.getBoolean(prefSettingSound, true)) {
+        if (prefSound.getBoolean(Constants.PREF_SETTING_SOUND, true)) {
             MediaPlayer incorrectSound = MediaPlayer.create(getActivity(), R.raw.incorrectsound);
             incorrectSound.start();
         }
 
-        if (pref.getBoolean(prefSettingAnimation, true)) {
+        if (pref.getBoolean(Constants.PREF_SETTING_ANIMATION, true)) {
             playAnimation(false);
         } else {
             learn();
@@ -244,8 +238,8 @@ public class FragmentLearn extends Fragment implements View.OnClickListener {
     }
 
     public void correctTranslation(){
-        SharedPreferences pref = getActivity().getSharedPreferences(prefSettingAnimation, Context.MODE_PRIVATE);
-        SharedPreferences prefSound = getActivity().getSharedPreferences(prefSettingSound, Context.MODE_PRIVATE);
+        SharedPreferences pref = getActivity().getSharedPreferences(Constants.PREF_SETTING_ANIMATION, Context.MODE_PRIVATE);
+        SharedPreferences prefSound = getActivity().getSharedPreferences(Constants.PREF_SETTING_SOUND, Context.MODE_PRIVATE);
 
         switch (vocab.getStrength(currentId)){
             case LOW:
@@ -264,12 +258,12 @@ public class FragmentLearn extends Fragment implements View.OnClickListener {
         maxScore++;
         score++;
 
-        if(prefSound.getBoolean(prefSettingSound, true)){
+        if(prefSound.getBoolean(Constants.PREF_SETTING_SOUND, true)){
             MediaPlayer correctSound = MediaPlayer.create(getActivity(), R.raw.correctsound);
             correctSound.start();
         }
 
-        if(pref.getBoolean(prefSettingAnimation, true)){
+        if(pref.getBoolean(Constants.PREF_SETTING_ANIMATION, true)){
             playAnimation(true);
         }
         else {
@@ -324,12 +318,12 @@ public class FragmentLearn extends Fragment implements View.OnClickListener {
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.btnShowTranslation:
-                SharedPreferences prefPlayRecord = getActivity().getSharedPreferences(prefSettingPlayRecord, getActivity().MODE_PRIVATE);
+                SharedPreferences prefPlayRecord = getActivity().getSharedPreferences(Constants.PERF_SETTING_PLAY_RECORD, getActivity().MODE_PRIVATE);
                 btnShowTranslation.setVisibility(View.GONE);
                 tvTranslation.setVisibility(View.VISIBLE);
                 btnCorrect.setVisibility(View.VISIBLE);
                 btnFalse.setVisibility(View.VISIBLE);
-                if (!isSwitched && prefPlayRecord.getBoolean(prefSettingPlayRecord, true)) {
+                if (!isSwitched && prefPlayRecord.getBoolean(Constants.PERF_SETTING_PLAY_RECORD, true)) {
                     vocabSound = new MediaPlayer();
 
                     try {

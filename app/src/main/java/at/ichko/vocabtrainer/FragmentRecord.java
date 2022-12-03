@@ -27,8 +27,6 @@ import java.io.IOException;
 
 public class FragmentRecord extends Fragment implements View.OnClickListener {
 
-    boolean allowed, recording = false;
-
     private ActivityResultLauncher<String> requestPermissionLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
                 if (isGranted) {
@@ -42,11 +40,13 @@ public class FragmentRecord extends Fragment implements View.OnClickListener {
     private String mParam1;
     private String mParam2;
 
+    boolean allowed, recording;
+
     ConstraintLayout lytMid;
 
     MediaRecorder recorder;
 
-    String fileName; //File Name of the Sound file that gets recorded
+    String fileName;
 
     Spinner spLanguageSelect;
     Keyboard keyboard;

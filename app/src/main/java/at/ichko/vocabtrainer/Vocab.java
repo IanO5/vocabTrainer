@@ -5,15 +5,15 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Vocab {
 
     private Context context;
-    private final String databaseName = "languagedatabase.db";
-    private ArrayList<Integer> lowVocab;
-    private ArrayList<Integer> midVocab;
-    private ArrayList<Integer> strongVocab;
-    private ArrayList<Integer> falseVocab;
+    private List<Integer> lowVocab;
+    private List<Integer> midVocab;
+    private List<Integer> strongVocab;
+    private List<Integer> falseVocab;
 
     public Vocab(Context context){
         this.context = context;
@@ -50,7 +50,7 @@ public class Vocab {
     }
 
     private void fillUpArrays(){
-        SQLiteDatabase database = context.openOrCreateDatabase(databaseName, Context.MODE_PRIVATE, null);
+        SQLiteDatabase database = context.openOrCreateDatabase(Constants.DATABASE_NAME, Context.MODE_PRIVATE, null);
         Table table = new Table(context);
 
         lowVocab.clear();
@@ -98,7 +98,7 @@ public class Vocab {
     }
 
     public void setStrength(VocabStrength strength, int id){
-        SQLiteDatabase database = context.openOrCreateDatabase(databaseName, Context.MODE_PRIVATE, null);
+        SQLiteDatabase database = context.openOrCreateDatabase(Constants.DATABASE_NAME, Context.MODE_PRIVATE, null);
         Table table = new Table(context);
         String currentTable = table.get(table.getTableIndex());
 
@@ -108,7 +108,7 @@ public class Vocab {
     }
 
     public VocabStrength getStrength(int id){
-        SQLiteDatabase database = context.openOrCreateDatabase(databaseName, Context.MODE_PRIVATE, null);
+        SQLiteDatabase database = context.openOrCreateDatabase(Constants.DATABASE_NAME, Context.MODE_PRIVATE, null);
         Table table = new Table(context);
         StringBuilder value = new StringBuilder();
         Cursor cursor = database.rawQuery("SELECT * FROM " + table.get(table.getTableIndex()) + " WHERE id ='" + id + "'", null);
