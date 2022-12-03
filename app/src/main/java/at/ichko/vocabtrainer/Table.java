@@ -21,7 +21,7 @@ public class Table {
 
     public List<String> getTableNames(){
         tableNames.clear();
-        SQLiteDatabase database = context.openOrCreateDatabase(Constants.TABLE_NAME, Context.MODE_PRIVATE, null);
+        SQLiteDatabase database = context.openOrCreateDatabase(Constants.DATABASE_NAME, Context.MODE_PRIVATE, null);
         Cursor cursor = database.rawQuery("SELECT name FROM sqlite_master WHERE type='table' AND name NOT IN ('android_metadata', 'sqlite_sequence', 'room_master_table') ",null);
         cursor.moveToFirst();
 
